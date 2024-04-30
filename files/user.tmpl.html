@@ -1,0 +1,115 @@
+{{ define "user" }}
+{{ template "head" . }}
+{{ template "nav" . }}
+
+<div id="loading-indicator" class="loading-indicator" style="display: none;">
+	<div class="loading-indicator__spinner"></div>
+</div>
+
+{{ $mainClass := "requesting-own-page" }}
+{{- if not .Data.RequestingOwnPage -}}
+	{{ $mainClass = "not-requesting-own-page" }}
+{{- end -}}
+
+<main class="{{$mainClass}}">
+	{{ $length := len .Data.Items }}
+
+	{{ if eq $length 0 }}
+	{{ if .LoggedIn }}
+	<p>
+		you don't seem to have any feeds yet.
+
+		<a href="/settings">add your first feed here!</a>
+	</p>
+	{{ end }} <!-- if .LoggedIn -->
+	{{ end }} <!-- if eq $length 0 -->
+
+	{{- if and .Data.RequestingOwnPage
+		       (gt .Data.UserPreferences.NumUnreadPostsToShowInHomeScreen 0)
+			   (gt (len .Data.OldestUnread) 0) -}}
+	<p class="puny" style="margin-top: 2em;">Displaying {{len .Data.OldestUnread}} oldest unread posts from timeline</p>
+	<ul>
+		{{ range .Data.OldestUnread }}
+			{{ template "list_item" . }}
+		{{ end }}
+	</ul>
+	<hr/>
+	{{- end -}}
+
+	<p class="puny" style="margin-top: 2em;">Displaying last {{ len .Data.Items }} posts from user's timeline</p>
+	<ul>
+		{{ range .Data.Items }}
+			{{ template "list_item" . }}
+		{{ end }}
+	</ul>
+</main>
+
+
+<script>
+	(function () {
+		document.getElementById("loading-indicator").style.display = "none";
+	})();
+
+	function toggleReadStatus(event) {
+		// {{ if .Data.RequestingOwnPage }}
+		const element = event.target;
+		const titleElement = element.parentElement.querySelectorAll("a")[1];
+		const isRead = titleElement.className === "read";
+
+		const postUrl = encodeURIComponent(titleElement.href);
+		const newReadStatus = !isRead;
+
+		titleElement.className = newReadStatus ? "read" : "unread";
+		element.innerText = newReadStatus ? "📜" : "💌";
+
+		setReadStatus(postUrl, newReadStatus).then(function (response) {
+			if (response.status !== 200) {
+				// undo the change
+				titleElement.className = isRead ? "read" : "unread";
+				element.innerText = isRead ? "📜" : "💌";
+			}
+		});
+		// {{ end }}
+	}
+
+	async function visitLink(event) {
+		// {{ if .Data.RequestingOwnPage }}
+		event.preventDefault();
+
+		document.getElementById("loading-indicator").style.display = "block";
+
+		const element = event.target;
+		const postUrl = encodeURIComponent(element.href);
+
+		element.parentElement.querySelectorAll("a")[0].innerText = "📜";
+		element.className = "read";
+
+		// Always mark the post as read
+		await setReadStatus(postUrl, true);
+
+		if (event.ctrlKey || event.metaKey) {
+			// Ctrl or Cmd was pressed, open the link in a new tab, which is the default behavior
+			window.open(element.href, "_blank");
+		} else {
+			// Ctrl or Cmd was not pressed, navigate to the link in the current tab
+			window.location.href = element.href;
+		}
+		// {{ end }}
+	}
+
+	function setReadStatus(postUrl, newReadStatus) {
+		// {{ if .Data.RequestingOwnPage }}
+		postUrl = encodeURIComponent(postUrl);
+		return fetch(`/api/v1/set-post-read-status/${postUrl}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: `new_has_read=${encodeURIComponent(newReadStatus)}`
+		});
+		// {{ end }}
+	}
+</script>
+
+{{ template "tail" . }}
+{{ end }}

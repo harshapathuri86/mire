@@ -1,0 +1,27 @@
+{{ define "nav" }}
+<nav>
+	<h2>
+		{{ if .LoggedIn }}
+		<a href="/u/{{ .Username }}">Mire</a>
+		{{ else }}
+		<a href="/">Mire</a>
+		{{ end }}
+	</h2>
+	{{ if .LoggedIn }}
+	<a href="/u/{{ .Username }}">home</a>
+	{{ end }}
+
+	<a href="/global">global</a>
+
+	<a href="/random">random</a>
+
+	<a href="/about">about</a>
+
+	| {{ if .LoggedIn }}
+	<a href="/settings">settings</a>
+	<a href="/logout">logout</a>
+	{{ else }}
+	<a href="/login">login</a>
+	{{ end }}
+</nav>
+{{ end }}

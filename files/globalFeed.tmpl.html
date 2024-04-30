@@ -1,0 +1,34 @@
+{{ define "global" }}
+{{ template "head" . }}
+{{ template "nav" . }}
+
+<main>
+
+    <h3>global</h3>
+
+    <p class="puny">
+        Here you're seeing the last {{ len .Data }} posts from all feeds known
+        to the system. If you're not seeing a feed you expect to then it's likely that it's
+        been marked as spam. If you think this is a mistake then please <a style="text-decoration: underline;"
+            href="https://codeberg.org/meadowingc/mire/issues/new">open a ticket</a>.
+    </p>
+
+    <ul>
+        {{ range .Data }}
+        <li>
+
+            <a href="{{ .URL }}">
+                {{ .Title }}
+            </a>
+            <br>
+            <span class=puny title="{{ .PublishedDatetime }}">published {{ .PublishedDatetime | timeSince }} via <a
+                    href="//{{ .URL | printDomain }}">{{ .URL | printDomain }}</a></span>
+
+        </li>
+        {{ end }}
+    </ul>
+
+</main>
+
+{{ template "tail" . }}
+{{ end }}

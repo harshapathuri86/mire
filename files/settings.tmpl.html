@@ -1,0 +1,104 @@
+{{ define "settings" }}
+{{ template "head" . }}
+{{ template "nav" . }}
+<main class="content-page">
+  <h3>Settings</h3>
+  <p>your public url: <a style="word-wrap: break-word;" href="/u/{{ .Username }}">
+      mire.meadowing.club/u/{{ .Username }}
+    </a>
+  </p>
+  <p>you can view your (public) blogroll here:
+    <a style="word-wrap: break-word;" href="/u/{{ .Username }}/blogroll">
+      mire.meadowing.club/u/{{ .Username }}/blogroll
+    </a>
+  </p>
+
+  <br />
+  <hr />
+  <section id="user-preferences">
+    <h4>User Preferences</h4>
+    <form method="POST" action="/settings/preferences">
+      {{ $up := .Data.UserPreferences }}
+
+      <!-- numUnreadPostsToShowInHomeScreen -->
+      <div>
+        <label for="numUnreadPostsToShowInHomeScreen">Number of unread posts to load in home screen (set to 0 to
+          disable):</label>
+        <input type="number" name="numUnreadPostsToShowInHomeScreen" id="numUnreadPostsToShowInHomeScreen"
+          value="{{ $up.NumUnreadPostsToShowInHomeScreen }}" max="20" min="0">
+      </div>
+      <br />
+
+      <!-- numPostsToShowInHomeScreen -->
+      <div>
+        <label for="numPostsToShowInHomeScreen">Number of posts to load in home screen:</label>
+        <select name="numPostsToShowInHomeScreen" id="numPostsToShowInHomeScreen">
+          {{ $numPostsOptions := makeSlice 50 100 150 200 300 }}
+          {{ range $numPostsOptions }}
+          <option value="{{ . }}" {{ if eq $up.NumPostsToShowInHomeScreen . }}selected{{ end }}>{{ . }}</option>
+          {{ end }}
+        </select>
+      </div>
+      <br />
+      <br />
+      <input type="submit" value="Save Preferences">
+    </form>
+  </section>
+  <br />
+  <hr />
+
+  <p>{{ len .Data.UrlsAndErrors }} subscriptions:</p>
+  <form method="POST" action="/settings/subscribe">
+    <textarea name="submit" rows="10" cols="50">
+{{ range .Data.UrlsAndErrors -}}
+{{ .URL }}
+{{ end -}}
+    </textarea>
+    <br />
+    <input type="submit" value="subscribe">
+  </form>
+  {{ $length := len .Data.UrlsAndErrors }}
+  {{ if eq $length 0 }}
+  <pre>
+‼️ tutorial ‼️
+
+once you have subscribed to some feeds,
+their posts will appear on your timeline.
+
+note that all timelines are public ‼️
+
+here are some feed urls to play with
+copy them into the text box above
+and press [subscribe]
+
+https://aco.bearblog.dev/feed/
+https://brandonwrites.xyz/feed/
+https://craigmod.com/index.xml
+https://herman.bearblog.dev/feed/
+https://j3s.sh/feed.atom
+https://lili.bearblog.dev/feed/
+https://meadow.bearblog.dev/feed/
+https://reverie.bearblog.dev/feed/
+https://roytang.net/blog/feed/rss/
+https://sizeof.cat/index.xml
+https://tiramisu.bearblog.dev/feed/
+https://www.visakanv.com/feed/
+
+
+/)/)
+( . .)
+( づ♡
+  </pre>
+  {{ else if gt $length 0 }}
+  <p>feed details</p>
+  {{ end }}
+  <pre>
+{{ range .Data.UrlsAndErrors -}}
+{{- $hasError := ne .Error "" -}}
+<a href="/feeds/{{ .URL | escapeURL }}">{{ .URL }}</a> {{ if $hasError }}<span title="{{ .Error }}"
+  style="cursor: pointer;">⚠️</span>{{ end }}
+{{ end -}}
+  </pre>
+</main>
+{{ template "tail" . }}
+{{ end }}

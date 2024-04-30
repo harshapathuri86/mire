@@ -1,0 +1,137 @@
+html {
+  font-family: monospace;
+  max-width: 600px;
+  margin: 20px auto;
+  /* make sure the scrollbar is always shown so
+     the width doesnt change between pages */
+  overflow-y: scroll;
+}
+
+p {
+  font-family: monospace;
+}
+
+nav {
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.content-page a {
+  border-bottom: 1px dotted #d4d4d4;
+}
+
+a:hover {
+  background-color: #eaddca;
+}
+
+ul a:hover li {
+  background-color: #eaddca;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+ul li {
+  padding: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+nav a {
+  border-bottom: 1px dotted #000;
+  color: #000;
+}
+
+.puny {
+  color: grey;
+  font-size: 0.75rem;
+}
+
+.loading-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  opacity: 0.5;
+  z-index: 100;
+}
+
+.loading-indicator__spinner {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  margin-top: -1.5rem;
+  margin-left: -1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border: 0.25rem solid #000;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #26241f;
+    color: #d4d4d4;
+  }
+
+  p {
+    color: #d4d4d4;
+  }
+
+  a {
+    color: #d4d4d4;
+  }
+
+  a:hover {
+    background-color: #3a3a3a;
+  }
+
+  ul a:hover li {
+    background-color: #3a3a3a;
+  }
+
+  nav a {
+    border-bottom: 1px dotted #d4d4d4;
+    color: #d4d4d4;
+  }
+
+  .puny {
+    color: #a0a0a0;
+  }
+
+  .not-requesting-own-page .toggle-read-status-emoji {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  input, select {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

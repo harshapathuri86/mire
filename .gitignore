@@ -1,0 +1,9 @@
+mire
+vore
+vore.db
+tmp
+
+*.db
+mire.db-*
+
+__debug_bin*
